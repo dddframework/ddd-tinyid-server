@@ -3,8 +3,7 @@ package com.xiaoju.uemc.tinyid.server.service.impl;
 import com.xiaoju.uemc.tinyid.server.dao.TinyIdTokenDAO;
 import com.xiaoju.uemc.tinyid.server.dao.entity.TinyIdToken;
 import com.xiaoju.uemc.tinyid.server.service.TinyIdTokenService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -12,19 +11,20 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author du_imba
  */
+@Slf4j
 @Component
 public class TinyIdTokenServiceImpl implements TinyIdTokenService {
 
     @Autowired
     private TinyIdTokenDAO tinyIdTokenDAO;
 
-    private static Map<String, Set<String>> token2bizTypes = new HashMap<>();
+    private static Map<String, Set<String>> token2bizTypes = new ConcurrentHashMap<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(TinyIdTokenServiceImpl.class);
 
     public List<TinyIdToken> queryAll() {
         return tinyIdTokenDAO.selectAll();
@@ -35,16 +35,16 @@ public class TinyIdTokenServiceImpl implements TinyIdTokenService {
      */
     @Scheduled(cron = "0 0/1 * * * ?")
     public void refresh() {
-        logger.info("refresh token begin");
+        log.info("refresh token begin");
         init();
     }
 
     @PostConstruct
     private synchronized void init() {
-        logger.info("tinyId token init begin");
+        log.info("tinyId token init begin");
         List<TinyIdToken> list = queryAll();
         token2bizTypes = converToMap(list);
-        logger.info("tinyId token init success, token size:{}", list == null ? 0 : list.size());
+        log.info("tinyId token init success, token size:{}", list == null ? 0 : list.size());
     }
 
     @Override
