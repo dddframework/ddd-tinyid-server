@@ -36,7 +36,7 @@ public class DbSegmentIdServiceImpl implements SegmentIdService {
      * @return
      */
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public SegmentId getNextSegmentId(String bizType) {
         // 获取nextTinyId的时候，有可能存在version冲突，需要重试
         for (int i = 0; i < Constants.RETRY; i++) {
@@ -49,17 +49,24 @@ public class DbSegmentIdServiceImpl implements SegmentIdService {
             int row = tinyIdInfoDAO.updateMaxId(tinyIdInfo.getId(), newMaxId, oldMaxId, tinyIdInfo.getVersion(),
                     tinyIdInfo.getBizType());
             if (row == 1) {
+                // 更新成功
                 tinyIdInfo.setMaxId(newMaxId);
                 SegmentId segmentId = convert(tinyIdInfo);
                 log.info("getNextSegmentId success tinyIdInfo:{} current:{}", tinyIdInfo, segmentId);
                 return segmentId;
             } else {
+                // 更新失败
                 log.info("getNextSegmentId conflict tinyIdInfo:{}", tinyIdInfo);
             }
         }
         throw new TinyIdSysException("get next segmentId conflict");
     }
 
+    /**
+     * 转换
+     * @param idInfo TinyIdInfo
+     * @return
+     */
     public SegmentId convert(TinyIdInfo idInfo) {
         SegmentId segmentId = new SegmentId();
         segmentId.setCurrentId(new AtomicLong(idInfo.getMaxId() - idInfo.getStep()));
