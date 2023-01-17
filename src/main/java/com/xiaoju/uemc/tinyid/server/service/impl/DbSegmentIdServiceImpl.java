@@ -6,8 +6,8 @@ import com.xiaoju.uemc.tinyid.base.service.SegmentIdService;
 import com.xiaoju.uemc.tinyid.server.common.Constants;
 import com.xiaoju.uemc.tinyid.server.dao.TinyIdInfoDAO;
 import com.xiaoju.uemc.tinyid.server.dao.entity.TinyIdInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +20,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class DbSegmentIdServiceImpl implements SegmentIdService {
 
-    @Autowired
-    private TinyIdInfoDAO tinyIdInfoDAO;
+    private final TinyIdInfoDAO tinyIdInfoDAO;
 
     /**
      * Transactional标记保证query和update使用的是同一连接

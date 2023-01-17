@@ -7,8 +7,8 @@ import com.xiaoju.uemc.tinyid.server.factory.impl.IdGeneratorFactoryServer;
 import com.xiaoju.uemc.tinyid.server.service.TinyIdTokenService;
 import com.xiaoju.uemc.tinyid.server.vo.ErrorCode;
 import com.xiaoju.uemc.tinyid.server.vo.Response;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,20 +19,28 @@ import java.util.List;
  * @author du_imba
  */
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/id/")
 public class IdContronller {
 
-    @Autowired
-    private IdGeneratorFactoryServer idGeneratorFactoryServer;
-    @Autowired
-    private SegmentIdService segmentIdService;
-    @Autowired
-    private TinyIdTokenService tinyIdTokenService;
+    private final IdGeneratorFactoryServer idGeneratorFactoryServer;
+    private final SegmentIdService segmentIdService;
+    private final TinyIdTokenService tinyIdTokenService;
 
+    /**
+     * 批量获取最大值
+     */
     @Value("${batch.size.max}")
     private Integer batchSizeMax;
 
+    /**
+     * 获取ID
+     * @param bizType   业务类型
+     * @param batchSize 批量获取数量
+     * @param token     令牌
+     * @return
+     */
     @RequestMapping("nextId")
     public Response<List<Long>> nextId(String bizType, Integer batchSize, String token) {
         Response<List<Long>> response = new Response<>();
@@ -64,6 +72,13 @@ public class IdContronller {
         return batchSize;
     }
 
+    /**
+     * 获取ID
+     * @param bizType   业务类型
+     * @param batchSize 批量获取数量
+     * @param token     令牌
+     * @return
+     */
     @RequestMapping("nextIdSimple")
     public String nextIdSimple(String bizType, Integer batchSize, String token) {
         Integer newBatchSize = checkBatchSize(batchSize);
@@ -90,6 +105,12 @@ public class IdContronller {
         return response;
     }
 
+    /**
+     * 获取ID
+     * @param bizType   业务类型
+     * @param token     令牌
+     * @return
+     */
     @RequestMapping("nextSegmentId")
     public Response<SegmentId> nextSegmentId(String bizType, String token) {
         Response<SegmentId> response = new Response<>();
@@ -109,6 +130,12 @@ public class IdContronller {
         return response;
     }
 
+    /**
+     * 获取ID
+     * @param bizType   业务类型
+     * @param token     令牌
+     * @return
+     */
     @RequestMapping("nextSegmentIdSimple")
     public String nextSegmentIdSimple(String bizType, String token) {
         if (!tinyIdTokenService.canVisit(bizType, token)) {

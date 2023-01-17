@@ -2,7 +2,7 @@ package com.xiaoju.uemc.tinyid.server.dao.impl;
 
 import com.xiaoju.uemc.tinyid.server.dao.TinyIdInfoDAO;
 import com.xiaoju.uemc.tinyid.server.dao.entity.TinyIdInfo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,10 +15,10 @@ import java.util.List;
  * @author du_imba
  */
 @Repository
+@RequiredArgsConstructor
 public class TinyIdInfoDAOImpl implements TinyIdInfoDAO {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public TinyIdInfo queryByBizType(String bizType) {

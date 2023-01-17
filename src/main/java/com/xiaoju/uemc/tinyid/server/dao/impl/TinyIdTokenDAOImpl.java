@@ -2,7 +2,7 @@ package com.xiaoju.uemc.tinyid.server.dao.impl;
 
 import com.xiaoju.uemc.tinyid.server.dao.TinyIdTokenDAO;
 import com.xiaoju.uemc.tinyid.server.dao.entity.TinyIdToken;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,10 +15,10 @@ import java.util.List;
  * @author du_imba
  */
 @Repository
+@RequiredArgsConstructor
 public class TinyIdTokenDAOImpl implements TinyIdTokenDAO {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public List<TinyIdToken> selectAll() {
